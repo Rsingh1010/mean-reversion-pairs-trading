@@ -52,11 +52,11 @@ cointegration testing (corrected p = 0.036).
 | Metric | Mean-Reversion Strategy | SPY Benchmark |
 |---|---:|---:|
 | Total Return | -0.82% | 58.24% |
-| Annualized Return (CAGR) | -0.41 | 25.93% |
+| Annualized Return (CAGR) | -0.41% | 25.93% |
 | Win Rate | 21.12% | 57.49% |
 | Annualized Volatility | 7.25% | 12.82% |
 | Sharpe Ratio | -0.02 | 1.87 |
-| Max Drawdown | -14.52% | -9.97 |
+| Max Drawdown | -14.52% | -9.97% |
 
 
 The strategy underperformed out-of-sample on a raw-return basis. This is
@@ -81,13 +81,32 @@ a failure to hide.
 - **No walk-forward validation.** A single split means these results are one
   data point, not a robust estimate of expected performance.
 
+## v1 Status: Frozen - Completed Negative Result
+
+This experiment is closed, not paused. Diagnostic checks were run before
+considering any model complexity:
+
+- **Transaction-cost sensitivity:** Sharpe is only 0.09 even at zero cost,
+  and turns negative between 0 and 10 bps - there was minimal edge to
+  protect from costs in the first place.
+- **Statistical power / FDR fragility:** KO-PEP's cointegration clears the
+  FDR threshold at 8 simultaneous tests (~0.00625) but fails at 9
+  (~0.00556) - one additional candidate pair erases the "significant"
+  result. This is a fragile finding, not a robust one.
+- **Walk-forward instability:** Yearly Sharpe (2019–2024) alternates sign
+  almost every year (-0.41, 0.90, 0.70, -0.81, 0.84, -0.84) with no
+  persistent direction - consistent with noise, not a stable edge.
+
+**Decision:** this version will not be reopened by expanding the candidate
+universe within this experiment. Any continuation is a separate,
+pre-registered v2 experiment (protocol defined before outcomes are
+observed) - see [v2 protocol, once written].
+
 ## Future Work
 
-**Research question:** Can an ML classifier predict whether a z-score
-deviation will actually mean-revert, and can it filter out low-quality
-trading signals?
-
-Candidate features for that phase: current z-score, spread momentum/rate of
-change, rolling volatility, recent returns, historical spread behavior, and
-other relevant market features. The goal would be testing whether a learned
-filter improves signal quality - not simply optimizing the backtest.
+A v2 experiment, if pursued, will be pre-registered: universe, candidate-pair
+rule, hypothesis family size, split methodology, transaction-cost
+assumptions, and an explicit pass/fail criterion all defined before any
+outcome is observed. It will only proceed to model complexity (an ML
+signal filter) if v2 itself produces a stable out-of-sample signal worth
+filtering.
